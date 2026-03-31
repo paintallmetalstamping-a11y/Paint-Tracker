@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paint Weight Log</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      padding: 32px 28px;
+      max-width: 420px;
+      width: 100%;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo-icon {
+      width: 52px;
+      height: 52px;
+      background: #1a56db;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    .logo-icon svg { width: 28px; height: 28px; fill: white; }
+    h1 { font-size: 20px; font-weight: 700; color: #111827; text-align: center; }
+    .subtitle { font-size: 13px; color: #6b7280; text-align: center; margin-top: 4px; }
+
+    .paint-badge {
+      background: #eff6ff;
+      border: 1.5px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .paint-badge .color-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+    .paint-badge .product-num {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #111827;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: #1a56db; box-shadow: 0 0 0 3px rgba(26,86,219,0.10); }
+    input[readonly] { background: #f9fafb; color: #6b7280; cursor: not-allowed; }
+    input::placeholder { color: #9ca3af; }
+
+    .weight-row { display: flex; gap: 10px; align-items: flex-end; }
+    .weight-row input { flex: 1; }
+    .unit-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #6b7280;
+      padding-bottom: 13px;
+      white-space: nowrap;
+    }
+
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 14px;
+      background: #1a56db;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+      letter-spacing: 0.2px;
+    }
+    button:hover { background: #1e40af; }
+    button:disabled { background: #93c5fd; cursor: not-allowed; }
+
+    .success {
+      display: none;
+      text-align: center;
+      padding: 28px 0 8px;
+    }
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: #d1fae5;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .success-icon svg { width: 32px; height: 32px; }
+    .success h2 { font-size: 20px; font-weight: 700; color: #065f46; margin-bottom: 6px; }
+    .success p { font-size: 14px; color: #6b7280; }
+
+    .error-msg {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #b91c1c;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .date-field { font-size: 14px; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+      </svg>
+    </div>
+    <h1>Paint Weight Log</h1>
+    <p class="subtitle">All Metal Stamping · Paint Inventory</p>
+  </div>
+
+  <div id="formSection">
+    <div class="paint-badge">
+      <div class="color-name" id="colorName">Loading...</div>
+      <div class="product-num" id="productNum"></div>
+    </div>
+
+    <label for="dateField">Date</label>
+    <input type="text" id="dateField" class="date-field" readonly />
+
+    <label for="initials">Your Initials</label>
+    <input type="text" id="initials" placeholder="e.g. JD" maxlength="5" autocomplete="off" />
+
+    <label for="weight">Current Weight</label>
+    <div class="weight-row">
+      <input type="number" id="weight" placeholder="0.00" step="0.01" min="0" />
+      <span class="unit-label">lbs</span>
+    </div>
+
+    <button id="submitBtn" onclick="submitForm()">Submit Weight</button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <div class="success" id="successSection">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 12l2 2 4-4" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="9" stroke="#059669" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <h2>Logged!</h2>
+    <p id="successDetail"></p>
+  </div>
+</div>
+
+<script>
+  // ── CONFIG ─────────────────────────────────────────────────────────────────
+  // Replace this URL with your Google Apps Script Web App URL after setup
+  const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+  // ───────────────────────────────────────────────────────────────────────────
+
+  function getParam(name) {
+    const url = new URL(window.location.href);
+    return decodeURIComponent((url.searchParams.get(name) || "").replace(/_/g, ' '));
+  }
+
+  function formatDate(d) {
+    return d.toLocaleDateString('en-US', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+  }
+
+  const product = getParam('product') || 'UNKNOWN';
+  const color = getParam('color') || 'UNKNOWN COLOR';
+
+  document.getElementById('colorName').textContent = color.toUpperCase();
+  document.getElementById('productNum').textContent = product;
+  document.getElementById('dateField').value = formatDate(new Date());
+
+  async function submitForm() {
+    const initials = document.getElementById('initials').value.trim();
+    const weight = document.getElementById('weight').value.trim();
+    const errorEl = document.getElementById('errorMsg');
+
+    errorEl.style.display = 'none';
+
+    if (!initials) { showError("Please enter your initials."); return; }
+    if (!weight || isNaN(weight) || parseFloat(weight) < 0) { showError("Please enter a valid weight."); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const payload = {
+      product: product,
+      color: color.toUpperCase(),
+      date: document.getElementById('dateField').value,
+      initials: initials.toUpperCase(),
+      weight: parseFloat(weight)
+    };
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      document.getElementById('formSection').style.display = 'none';
+      const s = document.getElementById('successSection');
+      s.style.display = 'block';
+      document.getElementById('successDetail').textContent =
+        `${color.toUpperCase()} · ${weight} lbs · ${initials.toUpperCase()}`;
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Submit Weight';
+      showError("Submission failed. Check your connection and try again.");
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+</script>
+</body>
+</html>

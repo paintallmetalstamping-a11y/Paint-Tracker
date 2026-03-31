@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paint Weight Log · All Metal Stamping</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ams-red:      #E31937;
+      --ams-blue:     #1C4B8C;
+      --ams-dark:     #1E2D3D;
+      --steel-white:  #F5F6F8;
+      --light-steel:  #E2E6ED;
+      --cool-gray:    #8795A8;
+      --press-green:  #2E7D52;
+      --light-navy:   #D6E4F4;
+
+      --font-display: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
+      --font-body:    'Inter', 'Helvetica Neue', Arial, sans-serif;
+      --font-data:    'DM Mono', 'Courier New', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--steel-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      background: var(--ams-dark);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .diamond-mark {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+    .diamond-mark .d1, .diamond-mark .d2, .diamond-mark .d3 {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+      transform: rotate(45deg);
+    }
+    .diamond-mark .d1 { background: var(--ams-blue); top: 2px;  left: 2px; }
+    .diamond-mark .d2 { background: var(--ams-blue); top: 2px;  left: 18px; }
+    .diamond-mark .d3 { background: var(--ams-red);  top: 18px; left: 10px; }
+
+    .wordmark {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.04em;
+      color: #fff;
+      line-height: 1.15;
+      text-transform: uppercase;
+    }
+    .wordmark span {
+      display: block;
+      font-weight: 500;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--cool-gray);
+      text-transform: uppercase;
+    }
+
+    .accent-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--ams-red);
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 16px rgba(30,45,61,0.10);
+      padding: 32px 28px 28px;
+      max-width: 440px;
+      width: calc(100% - 32px);
+      margin: 28px auto 40px;
+      border-top: 4px solid var(--ams-blue);
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--ams-dark);
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
+    }
+    .card-subtitle {
+      font-size: 11px;
+      color: var(--cool-gray);
+      font-family: var(--font-body);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 22px;
+    }
+
+    .paint-badge {
+      background: var(--light-navy);
+      border-left: 4px solid var(--ams-blue);
+      border-radius: 2px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+    }
+    .badge-label {
+      font-family: var(--font-data);
+      font-size: 10px;
+      color: var(--ams-blue);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .badge-color {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--ams-dark);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .badge-product {
+      font-family: var(--font-data);
+      font-size: 12px;
+      color: var(--cool-gray);
+      margin-top: 4px;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--light-steel);
+      margin: 4px 0 22px;
+    }
+
+    .field { margin-bottom: 18px; }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cool-gray);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--light-steel);
+      border-radius: 3px;
+      font-size: 15px;
+      font-family: var(--font-body);
+      color: var(--ams-dark);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus {
+      border-color: var(--ams-blue);
+      box-shadow: 0 0 0 3px rgba(28,75,140,0.10);
+    }
+    input[readonly] {
+      background: var(--steel-white);
+      color: var(--cool-gray);
+      cursor: not-allowed;
+      font-family: var(--font-data);
+      font-size: 13px;
+    }
+    input::placeholder { color: #c8cfd8; }
+    input[type="number"] { font-family: var(--font-data); font-size: 18px; }
+
+    .weight-wrap { display: flex; gap: 10px; align-items: flex-end; }
+    .weight-wrap input { flex: 1; }
+    .unit {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--cool-gray);
+      padding-bottom: 12px;
+      letter-spacing: 0.06em;
+    }
+
+    button {
+      margin-top: 8px;
+      width: 100%;
+      padding: 14px;
+      background: var(--ams-red);
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    button:hover:not(:disabled) { background: #c4142f; }
+    button:active:not(:disabled) { transform: scale(0.99); }
+    button:disabled { background: var(--cool-gray); cursor: not-allowed; }
+
+    .error-msg {
+      display: none;
+      background: #fff0f3;
+      border-left: 3px solid var(--ams-red);
+      border-radius: 2px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--ams-red);
+      margin-top: 12px;
+      font-weight: 500;
+    }
+
+    .success {
+      display: none;
+      text-align: center;
+      padding: 16px 0 4px;
+    }
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: #e8f5ee;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .success-icon svg { width: 30px; height: 30px; }
+    .success h2 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--press-green);
+      letter-spacing: 0.03em;
+      margin-bottom: 10px;
+    }
+    .success-detail {
+      font-family: var(--font-data);
+      font-size: 13px;
+      color: var(--cool-gray);
+      line-height: 2;
+    }
+    .success-detail strong { color: var(--ams-dark); font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 14px;
+      font-family: var(--font-data);
+      font-size: 10px;
+      color: var(--cool-gray);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: auto;
+    }
+    footer .red { color: var(--ams-red); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="diamond-mark">
+      <div class="d1"></div>
+      <div class="d2"></div>
+      <div class="d3"></div>
+    </div>
+    <div class="wordmark">
+      All Metal Stamping
+      <span>Paint Inventory System</span>
+    </div>
+  </header>
+  <div class="accent-bar"></div>
+
+  <div class="card">
+
+    <div id="formSection">
+      <div class="card-title">Weight Log Entry</div>
+      <div class="card-subtitle">Powder Coat Inventory &nbsp;·&nbsp; Paint Line</div>
+
+      <div class="paint-badge">
+        <div class="badge-label">Paint Color</div>
+        <div class="badge-color" id="colorName">Loading…</div>
+        <div class="badge-product" id="productNum"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label for="dateField">Date</label>
+        <input type="text" id="dateField" readonly />
+      </div>
+
+      <div class="field">
+        <label for="initials">Initials</label>
+        <input type="text" id="initials" placeholder="e.g. JD" maxlength="5" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label for="weight">Current Weight</label>
+        <div class="weight-wrap">
+          <input type="number" id="weight" placeholder="0.000" step="0.001" min="0" />
+          <span class="unit">LBS</span>
+        </div>
+      </div>
+
+      <button id="submitBtn" onclick="submitForm()">Submit Weight Entry</button>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <div class="success" id="successSection">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 13l4 4L19 7" stroke="#2E7D52" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Entry Logged</h2>
+      <div class="success-detail" id="successDetail"></div>
+    </div>
+
+  </div>
+
+  <footer>
+    All Metal Stamping &nbsp;<span class="red">◆</span>&nbsp; Paint Inventory &nbsp;<span class="red">◆</span>&nbsp; Paint Line
+  </footer>
+
+  <script>
+    // ── CONFIG ──────────────────────────────────────────────────────────────
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsQJ3cG3th6hvKgeHLAYkDFfLCPvwSuRTAquh6j5NUYT1zqkfD4le-EIPUa17B916U/exec";
+    // ────────────────────────────────────────────────────────────────────────
+
+    function getParam(name) {
+      const url = new URL(window.location.href);
+      return decodeURIComponent((url.searchParams.get(name) || "").replace(/_/g, ' '));
+    }
+
+    function formatDate(d) {
+      return d.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    const product = getParam('product') || 'UNKNOWN';
+    const color   = getParam('color')   || 'UNKNOWN COLOR';
+
+    document.getElementById('colorName').textContent = color.toUpperCase();
+    document.getElementById('productNum').textContent = product;
+    document.getElementById('dateField').value = formatDate(new Date());
+
+    async function submitForm() {
+      const initials = document.getElementById('initials').value.trim();
+      const weight   = document.getElementById('weight').value.trim();
+      const errorEl  = document.getElementById('errorMsg');
+      errorEl.style.display = 'none';
+
+      if (!initials) { showError("Please enter your initials."); return; }
+      if (!weight || isNaN(weight) || parseFloat(weight) < 0) { showError("Please enter a valid weight."); return; }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      const payload = {
+        product:  product,
+        color:    color.toUpperCase(),
+        date:     document.getElementById('dateField').value,
+        initials: initials.toUpperCase(),
+        weight:   parseFloat(weight)
+      };
+
+      try {
+        const params = new URLSearchParams({
+          product:  payload.product,
+          color:    payload.color,
+          initials: payload.initials,
+          date:     payload.date,
+          weight:   payload.weight
+        });
+        await fetch(GOOGLE_SCRIPT_URL + '?' + params.toString(), {
+          method: 'GET',
+          mode:   'no-cors'
+        });
+
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('successSection').style.display = 'block';
+        document.getElementById('successDetail').innerHTML =
+          `<strong>${color.toUpperCase()}</strong><br>${product}<br>${parseFloat(weight).toFixed(3)} lbs &nbsp;·&nbsp; ${initials.toUpperCase()} &nbsp;·&nbsp; ${document.getElementById('dateField').value}`;
+
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Submit Weight Entry';
+        showError("Submission failed. Check your connection and try again.");
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
